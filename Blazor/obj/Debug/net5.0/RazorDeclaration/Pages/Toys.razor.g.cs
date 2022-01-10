@@ -105,11 +105,12 @@ using System.Text.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 49 "C:\Dev\dotnet\DNPEksamen-304829\Blazor\Pages\Toys.razor"
+#line 62 "C:\Dev\dotnet\DNPEksamen-304829\Blazor\Pages\Toys.razor"
        
     private List<Child> AllChildren;
     private List<Child> ChildrenToShow;
     private static string URI = "https://localhost:5001";
+    private string filterByGender;
     
     protected override async Task OnInitializedAsync()
     {
@@ -133,12 +134,33 @@ using System.Text.Json;
     {
         using HttpClient client = new HttpClient();
 
-        await client.DeleteAsync($"{URI}/Toy/{id}");
+        await client.DeleteAsync($"{URI}/Child/Toys/{id}");
         
         _navigationManager.NavigateTo("/Toys", forceLoad: true);
     }
-    
-    
+
+    private void FilterByGender(ChangeEventArgs args)
+    {
+        filterByGender = null;
+
+        try
+        {
+            filterByGender = args.Value.ToString();
+        }
+        catch (Exception e){ }
+
+        ExecuteFilter();
+    }
+
+    private void ExecuteFilter()
+    {
+        ChildrenToShow = AllChildren.Where(
+            child => 
+                (filterByGender != null &&
+                 child.Gender.ToLower().Contains(filterByGender.ToLower()) ||
+                 filterByGender == null)
+            ).ToList();
+    }
 
 #line default
 #line hidden
