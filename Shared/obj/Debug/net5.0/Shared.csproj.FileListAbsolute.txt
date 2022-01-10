@@ -1,0 +1,12 @@
+C:\Dev\dotnet\DNPEksamen-304829\Shared\bin\Debug\net5.0\Shared.deps.json
+C:\Dev\dotnet\DNPEksamen-304829\Shared\bin\Debug\net5.0\Shared.dll
+C:\Dev\dotnet\DNPEksamen-304829\Shared\bin\Debug\net5.0\ref\Shared.dll
+C:\Dev\dotnet\DNPEksamen-304829\Shared\bin\Debug\net5.0\Shared.pdb
+C:\Dev\dotnet\DNPEksamen-304829\Shared\obj\Debug\net5.0\Shared.csproj.AssemblyReference.cache
+C:\Dev\dotnet\DNPEksamen-304829\Shared\obj\Debug\net5.0\Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\dotnet\DNPEksamen-304829\Shared\obj\Debug\net5.0\Shared.AssemblyInfoInputs.cache
+C:\Dev\dotnet\DNPEksamen-304829\Shared\obj\Debug\net5.0\Shared.AssemblyInfo.cs
+C:\Dev\dotnet\DNPEksamen-304829\Shared\obj\Debug\net5.0\Shared.csproj.CoreCompileInputs.cache
+C:\Dev\dotnet\DNPEksamen-304829\Shared\obj\Debug\net5.0\Shared.dll
+C:\Dev\dotnet\DNPEksamen-304829\Shared\obj\Debug\net5.0\ref\Shared.dll
+C:\Dev\dotnet\DNPEksamen-304829\Shared\obj\Debug\net5.0\Shared.pdb

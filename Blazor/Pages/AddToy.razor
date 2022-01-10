@@ -1,0 +1,114 @@
+﻿@page "/AddToy"
+
+@using global::Shared.Models
+@using System.Text.Json
+@using System.Text
+
+@inject NavigationManager _navigationManager
+
+<h3>AddToy</h3>
+@if (Children == null)
+{
+    <p>Leading...</p>
+}
+else
+{
+    <EditForm Model="newToy" OnValidSubmit="@AddToyAsync">
+        
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        
+        <div class="form-group">
+            Select toy owner:
+            <br />
+            <select @bind="ChildId" class="form-control">
+                <option>- Select child -</option>
+                @foreach (var child in Children)
+                {
+                    <option value="@child.Id">
+                        @child.Name (@child.Gender, @child.Age years old)
+                    </option>
+                }
+            </select>
+        </div>
+        
+        <div class="form-group">
+            Toy name:
+            <br />
+            <InputText @bind-Value="newToy.Name"/>
+        </div>
+        
+        <div class="form-group">
+            Toy color:
+            <br />
+            <InputText @bind-Value="newToy.Color"/>
+        </div>
+        
+        <div class="form-group">
+            Toy condition:
+            <br />
+            <InputText @bind-Value="newToy.Condition"/>
+        </div>
+        
+        <div class="form-group">
+            Toy is favorite (enter "true" or "false"):
+            <br />
+            <InputCheckbox @bind-Value="newToy.IsFavorite"/>
+        </div>
+
+        <p class="actions">
+            <button class="actions btn btn-outline-dark" type="submit">
+                Add toy
+            </button>
+        </p>
+    </EditForm>
+}
+
+@code {
+    private static string URI = "https://localhost:5001";
+    private List<Child> Children { get; set; }
+    private int ChildId { get; set; }
+    private Toy newToy = new Toy();
+
+    protected override async Task OnInitializedAsync()
+    {
+        using HttpClient client = new HttpClient();
+
+        HttpResponseMessage responseMessage = await client.GetAsync($"{URI}/Child");
+
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            throw new Exception(@"Error: {responseMessage.StatusCode}, {responseMessage.ReasonPhrase}");
+        }
+
+        string result = await responseMessage.Content.ReadAsStringAsync();
+
+        Children = JsonSerializer.Deserialize<List<Child>>(result, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        });
+    }
+
+    private async Task AddToyAsync()
+    {
+        using HttpClient client = new HttpClient();
+
+        string toyAsJson = JsonSerializer.Serialize(newToy);
+
+        StringContent content = new StringContent(
+            toyAsJson,
+            Encoding.UTF8,
+            "application/json"
+            );
+
+        HttpResponseMessage responseMessage = await client.PostAsync($"{URI}/Toy/owner/{ChildId}", content);
+
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            throw new Exception($"Error: {responseMessage.StatusCode}, {responseMessage.ReasonPhrase}");
+        }
+        
+        _navigationManager.NavigateTo("/Toys", forceLoad: true);
+    }
+
+}

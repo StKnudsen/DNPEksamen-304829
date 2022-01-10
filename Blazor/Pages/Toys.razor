@@ -1,0 +1,82 @@
+﻿@page "/Toys"
+@using global::Shared.Models
+@using System.Text.Json
+
+@inject NavigationManager _navigationManager
+
+<h3>Toys</h3>
+@if (ChildrenToShow == null)
+{
+    <p>Loading key ...</p>
+}
+else
+{
+    @foreach (var child in ChildrenToShow)
+    {
+        <p class="mt-5">@child.Name is @child.Age years old @child.Gender. Their toys include:</p>
+        <tabel class="table table-hover">
+            <thead>
+            <tr>
+                <th>Toy Name</th>
+                <th>Color</th>
+                <th>Is Favorite?</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+                @foreach (var toy in child.Toys)
+                {
+                    <tr>
+                        <td>@toy.Name</td>
+                        <td>@toy.Color</td>
+                        <td>@toy.IsFavorite</td>
+                        <td>
+                            <button
+                                @onclick="@(() => DeleteToy(toy.Id))"
+                                class="btn btn-sm btn-danger"
+                                >
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </tabel>
+    }
+}
+
+
+@code {
+    private List<Child> AllChildren;
+    private List<Child> ChildrenToShow;
+    private static string URI = "https://localhost:5001";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        using HttpClient client = new HttpClient();
+        HttpResponseMessage responseMessage = await client.GetAsync($"{URI}/Child");
+
+        if (!responseMessage.IsSuccessStatusCode)
+            throw new Exception(@"Error: {responseMessage.StatusCode}, {responseMessage.ReasonPhrase}");
+
+        string result = await responseMessage.Content.ReadAsStringAsync();
+
+        AllChildren = JsonSerializer.Deserialize<List<Child>>(result, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        });
+
+        ChildrenToShow = AllChildren;
+    }
+
+    private async Task DeleteToy(int id)
+    {
+        using HttpClient client = new HttpClient();
+
+        await client.DeleteAsync($"{URI}/Toy/{id}");
+        
+        _navigationManager.NavigateTo("/Toys", forceLoad: true);
+    }
+    
+    
+}

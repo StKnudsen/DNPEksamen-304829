@@ -1,0 +1,68 @@
+﻿@page "/AddChild"
+
+@using global::Shared.Models
+@using System.Text.Json
+@using System.Text
+
+@inject NavigationManager _navigationManager
+
+<h3>AddChild</h3>
+<EditForm Model="newChild" OnValidSubmit="@AddChildAsync">
+    
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+        
+    <div class="form-group">
+        Child name:
+        <br />
+        <InputText @bind-Value="newChild.Name"/>
+    </div>
+    
+    <div class="form-group">
+        Child Age:
+        <br />
+        <InputNumber @bind-Value="newChild.Age"/>
+    </div>
+    
+    <div class="form-group">
+        Child gender:
+        <br />
+        <InputText @bind-Value="newChild.Gender"/>
+    </div>
+    
+    <p class="actions">
+        <button class="actions btn btn-outline-dark" type="submit">
+            Add Child
+        </button>
+    </p>
+    
+</EditForm>
+
+
+
+@code {
+    private Child newChild = new Child();
+    private static string URI = "https://localhost:5001";
+
+    private async Task AddChildAsync()
+    {
+        using HttpClient client = new HttpClient();
+
+        string childAsJson = JsonSerializer.Serialize(newChild);
+
+        StringContent content = new StringContent(
+            childAsJson,
+            Encoding.UTF8,
+            "application/json"
+            );
+
+        HttpResponseMessage responseMessage = await client.PostAsync($"{URI}/Child", content);
+        
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            throw new Exception($"Error: {responseMessage.StatusCode}, {responseMessage.ReasonPhrase}");
+        }
+        
+        _navigationManager.NavigateTo("/Toys", forceLoad: true);
+    }
+}
