@@ -5,6 +5,19 @@
 @inject NavigationManager _navigationManager
 
 <h3>Toys</h3>
+
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">Filter children by gender:</span>
+    </div>
+    <input 
+        type="text" 
+        class="form-control" 
+        @oninput="@((arg) => FilterByGender(arg))"
+        placeholder="test with 'fe' as in female"
+    />
+</div>
+
 @if (ChildrenToShow == null)
 {
     <p>Loading key ...</p>
@@ -50,6 +63,7 @@ else
     private List<Child> AllChildren;
     private List<Child> ChildrenToShow;
     private static string URI = "https://localhost:5001";
+    private string filterByGender;
     
     protected override async Task OnInitializedAsync()
     {
@@ -73,10 +87,31 @@ else
     {
         using HttpClient client = new HttpClient();
 
-        await client.DeleteAsync($"{URI}/Toy/{id}");
+        await client.DeleteAsync($"{URI}/Child/Toys/{id}");
         
         _navigationManager.NavigateTo("/Toys", forceLoad: true);
     }
-    
-    
+
+    private void FilterByGender(ChangeEventArgs args)
+    {
+        filterByGender = null;
+
+        try
+        {
+            filterByGender = args.Value.ToString();
+        }
+        catch (Exception e){ }
+
+        ExecuteFilter();
+    }
+
+    private void ExecuteFilter()
+    {
+        ChildrenToShow = AllChildren.Where(
+            child => 
+                (filterByGender != null &&
+                 child.Gender.ToLower().Contains(filterByGender.ToLower()) ||
+                 filterByGender == null)
+            ).ToList();
+    }
 }

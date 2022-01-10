@@ -45,7 +45,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("Child/Toy/{id:int}")]
+        [Route("Child/Toys/{id:int}")]
         public async Task<ActionResult> DeleteToyAsync([FromRoute] int id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
